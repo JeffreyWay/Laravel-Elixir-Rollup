@@ -72,3 +72,5 @@ class RollupTask extends Elixir.Task {
         })
     }
 }
+
+export default RollupTask;
