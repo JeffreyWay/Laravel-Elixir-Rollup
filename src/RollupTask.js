@@ -1,13 +1,14 @@
-import fs from 'fs';
 import gulp from 'gulp';
 import Elixir from 'laravel-elixir';
-import buffer from 'vinyl-buffer';
-import rollup from 'rollup-stream';
-import buble from 'rollup-plugin-buble';
-import source from 'vinyl-source-stream';
-import replace from 'rollup-plugin-replace';
-import commonjs from 'rollup-plugin-commonjs';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import fs from 'fs';
+
+let buffer;
+let rollup;
+let buble;
+let source;
+let replace;
+let commonjs;
+let nodeResolve;
 
 class RollupTask extends Elixir.Task {
 
@@ -33,14 +34,14 @@ class RollupTask extends Elixir.Task {
      */
     gulpTask() {
         return this.rollup()
-        .on('error', this.onError())
-        .pipe(source(this.output.name))
-        .pipe(buffer())
-        .pipe(this.minify())
-        .on('error', this.onError())
-        .pipe(this.initSourceMaps({ loadMaps: true }))
-        .pipe(this.writeSourceMaps())
-        .pipe(this.saveAs(gulp));
+            .on('error', this.onError())
+            .pipe(source(this.output.name))
+            .pipe(buffer())
+            .pipe(this.minify())
+            .on('error', this.onError())
+            .pipe(this.initSourceMaps({ loadMaps: true }))
+            .pipe(this.writeSourceMaps())
+            .pipe(this.saveAs(gulp));
     }
 
 
@@ -50,6 +51,22 @@ class RollupTask extends Elixir.Task {
     registerWatchers() {
         this.watch(this.src.baseDir + '/**/*.+(js|vue|jsx)')
             .ignore(this.output.path);
+    }
+
+
+    /**
+     * Lazy load the task dependencies.
+     */
+    loadDependencies() {
+        console.log('Loading dependencies');
+
+        buffer = require('vinyl-buffer');
+        rollup = require('rollup-stream');
+        buble = require('rollup-plugin-buble');
+        source = require('vinyl-source-stream');
+        replace = require('rollup-plugin-replace');
+        commonjs = require('rollup-plugin-commonjs');
+        nodeResolve = require('rollup-plugin-node-resolve');
     }
 
 
