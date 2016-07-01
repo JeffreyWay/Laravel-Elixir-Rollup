@@ -1,3 +1,4 @@
+import fs from 'fs';
 import gulp from 'gulp';
 import Elixir from 'laravel-elixir';
 import buffer from 'vinyl-buffer';
