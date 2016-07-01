@@ -57,6 +57,9 @@ class RollupTask extends Elixir.Task {
      * Run the files through Rollup.
      */
     rollup() {
+        this.recordStep('Transforming ES2015 to ES5');
+        this.recordStep('Bundling');
+
         return rollup({
             entry: this.src.path,
             sourceMap: true,
