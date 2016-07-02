@@ -58,8 +58,6 @@ class RollupTask extends Elixir.Task {
      * Lazy load the task dependencies.
      */
     loadDependencies() {
-        console.log('Loading dependencies');
-
         buffer = require('vinyl-buffer');
         rollup = require('rollup-stream');
         buble = require('rollup-plugin-buble');
