@@ -1,6 +1,7 @@
-import gulp from 'gulp';
-import Elixir from 'laravel-elixir';
 import fs from 'fs';
+import gulp from 'gulp';
+import {extend} from 'underscore';
+import Elixir from 'laravel-elixir';
 
 let buffer;
 let rollup;
@@ -75,20 +76,25 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Transforming ES2015 to ES5');
         this.recordStep('Bundling');
 
-        return rollup({
+        return rollup(extend({
             entry: this.src.path,
             sourceMap: true,
+            format: 'iife',
+            moduleName: 'LaravelElixirBundle',
             plugins: [
                 nodeResolve({ browser: true }),
                 commonjs({
-                    include: 'node_modules/**'
+                    include: [
+                        'node_modules/**',
+                        this.src.baseDir + '/**'
+                    ]
                 }),
                 replace({
                     'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
                 }),
                 buble()
             ]
-        })
+        }, this.rollupConfig, this.options))
     }
 }
 
