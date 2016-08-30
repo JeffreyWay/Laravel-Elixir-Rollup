@@ -10,6 +10,7 @@ let source;
 let replace;
 let commonjs;
 let nodeResolve;
+let multiEntry;
 
 class RollupTask extends Elixir.Task {
 
@@ -66,6 +67,7 @@ class RollupTask extends Elixir.Task {
         replace = require('rollup-plugin-replace');
         commonjs = require('rollup-plugin-commonjs');
         nodeResolve = require('rollup-plugin-node-resolve');
+        multiEntry = require('rollup-plugin-multi-entry');
     }
 
 
@@ -92,7 +94,8 @@ class RollupTask extends Elixir.Task {
                 replace({
                     'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
                 }),
-                buble()
+                buble(),
+                multiEntry()
             ]
         }, this.rollupConfig, this.options))
     }
