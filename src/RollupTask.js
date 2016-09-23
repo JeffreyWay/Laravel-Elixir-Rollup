@@ -78,25 +78,32 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Transforming ES2015 to ES5');
         this.recordStep('Bundling');
 
+        // concat plugin array with user defined plugins before extending options
+        // underscore extend doesn't concat nested arrays
+        var plugins = [
+            nodeResolve({ browser: true }),
+            commonjs({
+                include: [
+                    'node_modules/**',
+                    this.src.baseDir + '/**'
+                ]
+            }),
+            replace({
+                'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
+            }),
+            buble(),
+            multiEntry()
+        ];
+
+        plugins = plugins.concat(this.options.plugins || [])
+        delete this.options.plugins
+
         return rollup(extend({
             entry: this.src.path,
             sourceMap: true,
             format: 'iife',
             moduleName: 'LaravelElixirBundle',
-            plugins: [
-                nodeResolve({ browser: true }),
-                commonjs({
-                    include: [
-                        'node_modules/**',
-                        this.src.baseDir + '/**'
-                    ]
-                }),
-                replace({
-                    'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
-                }),
-                buble(),
-                multiEntry()
-            ]
+            plugins: plugins
         }, this.rollupConfig, this.options))
     }
 }
