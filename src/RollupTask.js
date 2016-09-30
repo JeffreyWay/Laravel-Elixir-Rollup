@@ -3,7 +3,7 @@ import gulp from 'gulp';
 import {extend} from 'underscore';
 import Elixir from 'laravel-elixir';
 
-let buffer, inject, rollup, buble, vue, source, replace, commonjs, nodeResolve, multiEntry;
+let buffer, inject, rollup, buble, vue, source, replace, commonjs, nodeResolve, multiEntry, cache;
 
 class RollupTask extends Elixir.Task {
 
@@ -95,13 +95,19 @@ class RollupTask extends Elixir.Task {
 
         delete this.options.plugins
 
-        return rollup(extend({
-            entry: this.src.path,
-            sourceMap: true,
-            format: 'iife',
-            moduleName: 'LaravelElixirBundle',
-            plugins: plugins
-        }, this.rollupConfig, this.options))
+        return rollup(
+            extend({
+                entry: this.src.path,
+                cache: cache,
+                sourceMap: true,
+                format: 'iife',
+                moduleName: 'LaravelElixirBundle',
+                plugins: plugins
+            }, this.rollupConfig, this.options)
+        )
+        .on('bundle', function (bundle) {
+            cache = bundle;
+        });
     }
 }
 
