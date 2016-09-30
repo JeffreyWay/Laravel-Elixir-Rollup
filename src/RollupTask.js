@@ -3,16 +3,7 @@ import gulp from 'gulp';
 import {extend} from 'underscore';
 import Elixir from 'laravel-elixir';
 
-let buffer;
-let inject;
-let rollup;
-let buble;
-let vue;
-let source;
-let replace;
-let commonjs;
-let nodeResolve;
-let multiEntry;
+let buffer, inject, rollup, buble, vue, source, replace, commonjs, nodeResolve, multiEntry;
 
 class RollupTask extends Elixir.Task {
 
