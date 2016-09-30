@@ -4,6 +4,7 @@ import {extend} from 'underscore';
 import Elixir from 'laravel-elixir';
 
 let buffer;
+let inject;
 let rollup;
 let buble;
 let vue;
@@ -69,6 +70,7 @@ class RollupTask extends Elixir.Task {
         replace = require('rollup-plugin-replace');
         commonjs = require('rollup-plugin-commonjs');
         nodeResolve = require('rollup-plugin-node-resolve');
+        inject = require('rollup-plugin-inject');
         multiEntry = require('rollup-plugin-multi-entry');
     }
 
@@ -81,7 +83,11 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Bundling');
 
         var plugins = [
-            nodeResolve({ browser: true, main: true }),
+            inject({
+                include: './node_modules/bootstrap-sass/assets/javascripts/bootstrap.js',
+                jQuery: 'jQuery'
+            }),
+            nodeResolve({ browser: true, main: true, jsnext: true }),
             commonjs({
                 include: [
                     'node_modules/**',
