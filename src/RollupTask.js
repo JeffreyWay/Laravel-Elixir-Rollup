@@ -6,6 +6,7 @@ import Elixir from 'laravel-elixir';
 let buffer;
 let rollup;
 let buble;
+let vue;
 let source;
 let replace;
 let commonjs;
@@ -62,6 +63,7 @@ class RollupTask extends Elixir.Task {
     loadDependencies() {
         buffer = require('vinyl-buffer');
         rollup = require('rollup-stream');
+        vue = require('rollup-plugin-vue');
         buble = require('rollup-plugin-buble');
         source = require('vinyl-source-stream');
         replace = require('rollup-plugin-replace');
@@ -78,10 +80,8 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Transforming ES2015 to ES5');
         this.recordStep('Bundling');
 
-        // concat plugin array with user defined plugins before extending options
-        // underscore extend doesn't concat nested arrays
         var plugins = [
-            nodeResolve({ browser: true }),
+            nodeResolve({ browser: true, main: true }),
             commonjs({
                 include: [
                     'node_modules/**',
@@ -91,11 +91,11 @@ class RollupTask extends Elixir.Task {
             replace({
                 'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
             }),
+            vue(),
             buble(),
             multiEntry()
-        ];
+        ].concat(this.options.plugins || []);
 
-        plugins = plugins.concat(this.options.plugins || [])
         delete this.options.plugins
 
         return rollup(extend({
