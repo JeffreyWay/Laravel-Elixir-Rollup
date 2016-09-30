@@ -21,7 +21,7 @@ class RollupTask extends Elixir.Task {
      * @param  {GulpPaths}   paths
      * @param  {object|null} options
      */
-    constructor(name, paths, options) {
+    constructor(name, paths, options = {}) {
         super(name, null, paths);
 
         this.options = options;
