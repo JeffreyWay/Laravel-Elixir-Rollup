@@ -78,6 +78,7 @@ class RollupTask extends Elixir.Task {
                 include: './node_modules/bootstrap-sass/assets/javascripts/bootstrap.js',
                 jQuery: 'jQuery'
             }),
+            multiEntry(),
             nodeResolve({ browser: true, main: true, jsnext: true }),
             commonjs({
                 include: [
@@ -89,8 +90,7 @@ class RollupTask extends Elixir.Task {
                 'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
             }),
             vue(),
-            buble(),
-            multiEntry()
+            buble()
         ].concat(this.options.plugins || []);
 
         delete this.options.plugins
