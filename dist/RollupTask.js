@@ -140,11 +140,13 @@ var RollupTask = function (_Elixir$Task) {
             delete this.options.plugins;
 
             return _rollup((0, _underscore.extend)({
-                entry: this.src.path,
+                input: this.src.path,
+                output: {
+                    name: 'LaravelElixirBundle',
+                    sourcemap: true,
+                    format: 'iife'
+                },
                 cache: cache,
-                sourcemap: true,
-                format: 'iife',
-                name: 'LaravelElixirBundle',
                 plugins: plugins
             }, this.rollupConfig, this.options)).on('bundle', function (bundle) {
                 cache = bundle;
