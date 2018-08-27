@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gulp from 'gulp';
-import {extend} from 'underscore';
+import {extend, isEmpty} from 'underscore';
 import Elixir from 'laravel-elixir';
 
 let buffer, inject, rollup, buble, vue, source, replace, commonjs, nodeResolve, multiEntry, cache;
@@ -17,6 +17,7 @@ class RollupTask extends Elixir.Task {
     constructor(name, paths, options = {}) {
         super(name, null, paths);
 
+        options.defaultPluginOptions = options.defaultPluginOptions || {};
         this.options = options;
 
         if (fs.existsSync('rollup.config.js')) {
@@ -73,24 +74,33 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Transforming ES2015 to ES5');
         this.recordStep('Bundling');
 
+        var loadPlugin = function (plugin, options) {
+            let realOptions = extend(options || {}, this.options.defaultPluginOptions[plugin.name] || {});
+            if (isEmpty(realOptions)) {
+                realOptions = undefined;
+            }
+
+            return plugin(realOptions);
+        };
+
         var plugins = [
-            inject({
+            loadPlugin(inject, {
                 include: './node_modules/bootstrap-sass/assets/javascripts/bootstrap.js',
                 jQuery: 'jQuery'
             }),
-            multiEntry(),
-            nodeResolve({ browser: true, main: true, jsnext: true }),
-            commonjs({
+            loadPlugin(multiEntry),
+            loadPlugin(nodeResolve, { browser: true, main: true, jsnext: true }),
+            loadPlugin(commonjs, {
                 include: [
                     'node_modules/**',
                     this.src.baseDir + '/**'
                 ]
             }),
-            replace({
+            loadPlugin(replace, {
                 'process.env.NODE_ENV': JSON.stringify(Elixir.inProduction)
             }),
-            vue(),
-            buble()
+            loadPlugin(vue),
+            loadPlugin(buble)
         ].concat(this.options.plugins || []);
 
         delete this.options.plugins
