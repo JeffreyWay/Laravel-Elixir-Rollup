@@ -113,11 +113,13 @@ var RollupTask = function (_Elixir$Task) {
     }, {
         key: 'rollup',
         value: function rollup() {
+            var _this2 = this;
+
             this.recordStep('Transforming ES2015 to ES5');
             this.recordStep('Bundling');
 
             var loadPlugin = function loadPlugin(plugin, options) {
-                var realOptions = (0, _underscore.extend)(options || {}, this.options.defaultPluginOptions[plugin.name] || {});
+                var realOptions = (0, _underscore.extend)(options || {}, _this2.options.defaultPluginOptions[plugin.name] || {});
                 if ((0, _underscore.isEmpty)(realOptions)) {
                     realOptions = undefined;
                 }
@@ -134,6 +136,7 @@ var RollupTask = function (_Elixir$Task) {
                 'process.env.NODE_ENV': JSON.stringify(_laravelElixir2.default.inProduction)
             }), loadPlugin(vue), loadPlugin(buble)].concat(this.options.plugins || []);
 
+            delete this.options.defaultPluginOptions;
             delete this.options.plugins;
 
             return _rollup((0, _underscore.extend)({

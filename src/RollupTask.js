@@ -74,7 +74,7 @@ class RollupTask extends Elixir.Task {
         this.recordStep('Transforming ES2015 to ES5');
         this.recordStep('Bundling');
 
-        var loadPlugin = function (plugin, options) {
+        var loadPlugin = (plugin, options) => {
             let realOptions = extend(options || {}, this.options.defaultPluginOptions[plugin.name] || {});
             if (isEmpty(realOptions)) {
                 realOptions = undefined;
@@ -103,7 +103,8 @@ class RollupTask extends Elixir.Task {
             loadPlugin(buble)
         ].concat(this.options.plugins || []);
 
-        delete this.options.plugins
+        delete this.options.defaultPluginOptions;
+        delete this.options.plugins;
 
         return rollup(
             extend({
