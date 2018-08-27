@@ -124,6 +124,11 @@ var RollupTask = function (_Elixir$Task) {
                     realOptions = undefined;
                 }
 
+                // If should be skipped - don't initialize plugin
+                if (realOptions && realOptions.skipPlugin === true) {
+                    return null;
+                }
+
                 return plugin(realOptions);
             };
 
@@ -135,6 +140,11 @@ var RollupTask = function (_Elixir$Task) {
             }), loadPlugin(replace, {
                 'process.env.NODE_ENV': JSON.stringify(_laravelElixir2.default.inProduction)
             }), loadPlugin(vue), loadPlugin(buble)].concat(this.options.plugins || []);
+
+            // Remove 'null' entries
+            plugins = (0, _underscore.filter)(plugins, function (i) {
+                return !!i;
+            });
 
             delete this.options.defaultPluginOptions;
             delete this.options.plugins;

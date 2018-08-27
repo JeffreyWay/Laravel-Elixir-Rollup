@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gulp from 'gulp';
-import {extend, isEmpty} from 'underscore';
+import {extend, isEmpty, filter} from 'underscore';
 import Elixir from 'laravel-elixir';
 
 let buffer, inject, rollup, buble, vue, source, replace, commonjs, nodeResolve, multiEntry, cache;
@@ -80,6 +80,11 @@ class RollupTask extends Elixir.Task {
                 realOptions = undefined;
             }
 
+            // If should be skipped - don't initialize plugin
+            if (realOptions && realOptions.skipPlugin === true) {
+                return null;
+            }
+
             return plugin(realOptions);
         };
 
@@ -102,6 +107,11 @@ class RollupTask extends Elixir.Task {
             loadPlugin(vue),
             loadPlugin(buble)
         ].concat(this.options.plugins || []);
+
+        // Remove 'null' entries
+        plugins = filter(plugins, function (i) {
+            return !!i;
+        });
 
         delete this.options.defaultPluginOptions;
         delete this.options.plugins;
